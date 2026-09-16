@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TypeRush &mdash; Premium Typing Speed Test</title>
+<meta name="description" content="TypeRush is a premium in-browser typing speed test with live WPM, character-accurate error tracking, an animated results gauge and a personal best board. Pure HTML, CSS and JavaScript.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237c5cff'/%3E%3Cpath d='M18 5 9 18h6l-1 9 9-13h-6z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<a class="skip-link" href="#stage">Skip to typing area</a>
+
+<div class="aurora" aria-hidden="true">
+  <span class="blob b1"></span>
+  <span class="blob b2"></span>
+  <span class="blob b3"></span>
+  <span class="grid-overlay"></span>
+</div>
+
+<header class="site-head">
+  <a class="brand" href="#top">
+    <span class="brand-mark" aria-hidden="true">TR</span>
+    <span class="brand-text">Type<span class="grad">Rush</span></span>
+  </a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#board">Test</a>
+    <a href="#results">Results</a>
+    <a href="#records">Records</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero">
+    <p class="eyebrow">Vanilla HTML &middot; CSS &middot; JS &mdash; no frameworks, no build step</p>
+    <h1>Type faster.<br><span class="grad">Think sharper.</span></h1>
+    <p class="lede">A distraction-free speed test with live WPM, character-accurate error tracking, an animated results gauge and a personal best board that remembers you across sessions.</p>
+
+    <div class="modes" role="group" aria-label="Choose test duration">
+      <button class="mode" type="button" data-seconds="15" aria-pressed="false">15s</button>
+      <button class="mode is-active" type="button" data-seconds="30" aria-pressed="true">30s</button>
+      <button class="mode" type="button" data-seconds="60" aria-pressed="false">60s</button>
+      <button class="mode" type="button" data-seconds="120" aria-pressed="false">120s</button>
+    </div>
+    <p class="tips"><kbd>Tab</kbd> restart &middot; <kbd>Esc</kbd> reset &middot; just start typing to begin the clock</p>
+  </section>
+
+  <section id="board" class="board glass" aria-labelledby="board-title">
+    <h2 class="sr-only" id="board-title">Typing test</h2>
+
+    <ul class="stats" aria-label="Live statistics">
+      <li class="stat">
+        <span class="stat-label">wpm</span>
+        <span class="stat-value" id="stat-wpm" aria-live="off">0</span>
+      </li>
+      <li class="stat">
+        <span class="stat-label">accuracy</span>
+        <span class="stat-value" id="stat-acc" aria-live="off">100%</span>
+      </li>
+      <li class="stat">
+        <span class="stat-label">time left</span>
+        <span class="stat-value" id="stat-time" aria-live="off">30</span>
+      </li>
+      <li class="stat">
+        <span class="stat-label">errors</span>
+        <span class="stat-value" id="stat-err" aria-live="off">0</span>
+      </li>
+    </ul>
+
+    <div class="stage" id="stage" role="region" aria-label="Type the words shown here" tabindex="0">
+      <div class="words-clip">
+        <div class="words" id="words"></div>
+      </div>
+      <p class="hint" id="hint">Click here and start typing to begin the clock</p>
+    </div>
+
+    <div class="bar" role="progressbar" aria-label="Test progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><span id="bar-fill"></span></div>
+  </section>
+
+  <section id="results" class="results glass is-hidden" aria-labelledby="results-title" tabindex="-1">
+    <h2 id="results-title">Your run</h2>
+
+    <div class="result-grid">
+      <div class="gauge-wrap">
+        <svg class="gauge" viewBox="0 0 120 120" role="img" aria-label="Words per minute gauge">
+          <defs>
+            <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7c5cff"></stop>
+              <stop offset="55%" stop-color="#22d3ee"></stop>
+              <stop offset="100%" stop-color="#ff4d9d"></stop>
+            </linearGradient>
+          </defs>
+          <circle class="gauge-track" cx="60" cy="60" r="52"></circle>
+          <circle class="gauge-fill" id="gauge-fill" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="gauge-center">
+          <span class="gauge-value" id="res-wpm">0</span>
+          <span class="gauge-label">wpm</span>
+        </div>
+      </div>
+
+      <div class="result-stats">
+        <div class="tiles">
+          <div class="tile">
+            <span class="tile-label">accuracy</span>
+            <span class="tile-value" id="res-acc">0%</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">raw wpm</span>
+            <span class="tile-value" id="res-raw">0</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">consistency</span>
+            <span class="tile-value" id="res-cons">0%</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">errors</span>
+            <span class="tile-value" id="res-err">0</span>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <span class="chart-caption">pace over time</span>
+          <svg class="chart" viewBox="0 0 100 40" preserveAspectRatio="none" role="img" aria-label="Words per minute over time">
+            <defs>
+              <linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.45"></stop>
+                <stop offset="100%" stop-color="#22d3ee" stop-opacity="0"></stop>
+              </linearGradient>
+            </defs>
+            <path class="chart-area" id="chart-area" d=""></path>
+            <polyline class="chart-line" id="chart-line" points=""></polyline>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <p class="badge is-hidden" id="new-best">New personal best</p>
+
+    <div class="result-actions">
+      <button class="btn primary" type="button" id="again">Go again</button>
+      <button class="btn" type="button" id="share">Copy result</button>
+    </div>
+  </section>
+
+  <section id="records" class="records glass" aria-labelledby="records-title">
+    <h2 id="records-title">Personal best</h2>
+    <ul class="records-list">
+      <li><span class="rec-label">Best WPM</span><strong class="rec-value" id="rec-wpm">&mdash;</strong></li>
+      <li><span class="rec-label">Best accuracy</span><strong class="rec-value" id="rec-acc">&mdash;</strong></li>
+      <li><span class="rec-label">Tests taken</span><strong class="rec-value" id="rec-tests">0</strong></li>
+    </ul>
+    <button class="btn ghost" type="button" id="reset-records">Reset records</button>
+  </section>
+</main>
+
+<footer class="site-foot">
+  <p>TypeRush &mdash; hand-built with vanilla HTML, CSS and JavaScript. Records are stored locally in your browser.</p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
